@@ -6,7 +6,7 @@ import json
 from stmpy import Machine, Driver
 from os import system
 
-MQTT_BROKER = 'test.mosquitto.org'
+MQTT_BROKER = 'mqtt.item.ntnu.no'
 MQTT_PORT = 1883
 
 MQTT_TOPIC_INPUT = 'ttm4115/command'

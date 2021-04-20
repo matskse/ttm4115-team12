@@ -9,7 +9,7 @@ class FileReceiverComponent:
 
     def on_message(self, client, userdata, msg):
         print("file received")
-        f = open('newTextFile.txt', 'wb')
+        f = open('newSoundFile.wav', 'wb')
         f.write(msg.payload)
         f.close()
     

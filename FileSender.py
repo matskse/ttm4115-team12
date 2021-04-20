@@ -25,9 +25,9 @@ class FileSenderComponent:
 
         
     
-    def send_file(self):
-        print('Sending file...')
-        f = open("sampleFile.txt", "rb")
+    def send_file(self, fileName):
+        print('Sending file: {}'.format(fileName))
+        f = open(fileName, "rb")
         binaryString = f.read()
         f.close()
         byteArray = bytearray(binaryString)

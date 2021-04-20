@@ -13,6 +13,7 @@ MQTT_TOPIC_INPUT = 'ttm4115/command'
 MQTT_TOPIC_OUTPUT = 'ttm4115/answer'
 
 #test
+#test
 # logging.DEBUG: Most fine-grained logging, printing everything
 # logging.INFO:  Only the most important informational log items
 # logging.WARN:  Show only warnings and errors.

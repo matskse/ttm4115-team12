@@ -21,9 +21,9 @@ speaker = Speaker()
 
 #t0 = {'source': 'initial', 'target': 'error'}        
 t1 = {'trigger': 'timer2', 'source': 'error', 'target': 'system_crash'}
-t2 = {'trigger': 'done', 'source': 'system_crash', 'target': 'idle'}
+t2 = {'trigger': 'done', 'source': 'system_crash', 'target': 'idle'} #returnerer til idle, bare i vårt eksempel
 
-s1 = {'name': 'system_crash', 'do': 'speak(*)', 'timer2': 'defer'}
+s1 = {'name': 'system_crash', 'do': 'speak(*)'}
 
 stm = Machine(name='stm', transitions=[t1, t2], states=[s1], obj=speaker)
 speaker.stm = stm

@@ -1,3 +1,3 @@
 # ttm4115-team12
 
-Semester project for TTM4115 team 12.
+Semester project for TTM4115 team 12. 

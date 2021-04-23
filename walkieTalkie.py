@@ -5,6 +5,7 @@ from threading import Thread
 import json
 from stmpy import Machine, Driver
 from os import system
+from FileSender import FileSenderComponent
 
 MQTT_BROKER = 'mqtt.item.ntnu.no'
 MQTT_PORT = 1883
@@ -29,12 +30,16 @@ logger.addHandler(ch)
 
 
 class WalkieTalkie: 
-    """"
-    state machine for walkie talkie
-
-    """"
+    
+    #state machine for walkie talkie
+    #
+    
     def __init__(self):
         #display user interface
+        self.FileSenderComponent = FileSenderComponent()
+        
+        
+
     
 
     def play_message_f(self):

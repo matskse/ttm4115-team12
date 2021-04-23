@@ -6,6 +6,11 @@ import json
 from stmpy import Machine, Driver
 from os import system
 from FileSender import FileSenderComponent
+from FileReceiver import FileReceiverComponent
+#from CommandSender import CommandSenderComponent
+from appJar import gui
+from recorderstm import Recorder
+import time
 
 MQTT_BROKER = 'mqtt.item.ntnu.no'
 MQTT_PORT = 1883
@@ -37,45 +42,86 @@ class WalkieTalkie:
     def __init__(self):
         #display user interface
         self.FileSenderComponent = FileSenderComponent()
-        
-        
+        self.FileReceiverComponent = FileReceiverComponent()
+        #self.CommandSender = CommandSenderComponent()
+        self.create_gui()
+
+    def create_gui(self):
+        self.app = gui()
+
+
+        self.app.startLabelFrame('Record Message')
+        self.app.addButton('Record', self.record_message_f)
+        self.app.stopLabelFrame()
+
+        self.app.go()
 
     
-
+    
     def play_message_f(self):
         #spill av melding når message innkommer
         #gi en error message
+        pass
 
     def record_message_f(self):
         #spill inn lyd. 
         #gi en error messafe
+        print("TEST")
+        self.Recorder = Recorder()
+        
+        t0 = {'source': 'initial', 'target': 'ready'}
+        t1 = {'trigger': 'start', 'source': 'ready', 'target': 'recording'}
+        t2 = {'trigger': 'done', 'source': 'recording', 'target': 'processing'}
+        t3 = {'trigger': 'done', 'source': 'processing', 'target': 'ready'}
+
+        s_recording = {'name': 'recording', 'do': 'record()', "stop": "stop()"}
+        s_processing = {'name': 'processing', 'do': 'process()'}
+
+        stm = Machine(name='stm', transitions=[t0, t1, t2, t3], states=[s_recording, s_processing], obj=self.Recorder)
+        self.Recorder.stm = stm
+
+        driver = Driver()
+        driver.add_machine(stm)
+        driver.start()
+
+        print("driver started")
+
+        driver.send('start', 'stm')
+        print("sent start, now waiting for a 5 seconds long recording")
+        time.sleep(5)
+        print("wait is over")
+        driver.send('stop', 'stm')
+        print("sent stop")
 
     def show_main_menu(self):
         #start meny som kan vises. La inn denne selv i etter tid, kan ha med hvis vi vil. 
+        pass
 
     
     def record_receiver(self):
         #bestem hvem man vil sende til. 
         #gi en error message
+        pass
 
     def send_message_f(self):
         #send meldingen som er recorded i record message. 
         #send til den som er bestem i record receiver
         #må gi en error message
-    
+        pass
 
     def join_group(self):
         #bli med i en grupp
         #kan implementeres med en speech to text funksjon¨
-    
+        pass
 
     def delete_group(self):
         #fjerne seg fra en gruppe
         #kan også implementeres med en speec to text 
-    
+        pass
     
     def test_connection(self):
         #teste tilkoblingen. 
+        pass
 
 
 
@@ -263,8 +309,7 @@ system_crash = {
     'do': 'speak(*)'
 }
 
-stm = Machine(name='stm', transistions=[t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21],
-    states=[idle, play_message, manage_groups, select_group, record_message, send_message, error, system_crash], obj=walkieTalkie)
+stm = Machine(name='stm', transitions=[t0, t1, t2, t3, t4, t5, t6, t7, t8, t9, t10, t11, t12, t13, t14, t15, t16, t17, t18, t19, t20, t21], states=[idle, play_message, manage_groups, select_group, record_message, send_message, error, system_crash], obj=walkieTalkie)
 
 walkieTalkie.stm = stm
 driver = Driver()

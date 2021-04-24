@@ -193,7 +193,7 @@ class WalkieTalkie:
 
     error = {
         'name': 'error',
-        'entry': 'test_connection; start_timer("t1", 3000); display_error_message'
+        'entry': 'test_connection; start_timer("t1", 3000)'
     }
 
     system_crash = {
@@ -231,11 +231,15 @@ class WalkieTalkie:
         #File receiving
         self.FileReceiver = FileReceiverComponent(self.driver, self.MQTT_BROKER, self.MQTT_PORT)
 
+        #Errors
+        self.error_message = 'ERROR: Connection lost'
+
         self.create_gui()
 
     def create_gui(self):
         self.app = gui()
         self.app.setSize(500, 500)
+        self.app.setBg('white', override=False, tint=False)
 
         self.app.startLabelFrame('Record Message')
         self.app.addButton('Record', self.record_button)
@@ -255,15 +259,6 @@ class WalkieTalkie:
         self.app.stopLabelFrame()
         self.app.stopFrame()
 
-        self.app.startFrame("RIGHT", row=50, column=1)
-        self.app.startLabelFrame('Leave Groups')
-        self.app.addButton('Leave Doctors', self.on_button_pressed_leave_groups)
-        self.app.addButton('Leave Nurses', self.on_button_pressed_leave_groups)
-        self.app.addButton('Leave Surgeons', self.on_button_pressed_leave_groups)
-        self.app.stopLabelFrame()
-        self.app.stopFrame()
-
-
         self.app.startLabelFrame('Choose Recipient Group')
         self.app.addButton('Send to Doctors', self.on_button_pressed_recipient_group)
         self.app.addButton('Send to Nurses', self.on_button_pressed_recipient_group)
@@ -271,6 +266,25 @@ class WalkieTalkie:
         self.app.addLabel("recipient_groups_title", "Recipient Groups")
         self.app.addLabel("No Recipient Groups")
         self.app.stopLabelFrame()
+
+
+        self.app.startFrame("RIGHT", row=50, column=1)
+
+        self.app.startLabelFrame('Leave Groups')
+        self.app.addButton('Leave Doctors', self.on_button_pressed_leave_groups)
+        self.app.addButton('Leave Nurses', self.on_button_pressed_leave_groups)
+        self.app.addButton('Leave Surgeons', self.on_button_pressed_leave_groups)
+        self.app.stopLabelFrame()
+
+        self.app.startLabelFrame('Error Display')
+        self.app.addLabel("error_label", "No errors")
+        self.app.addButton('Simulate connection lost', self.simulate_connection_lost)
+        self.app.stopLabelFrame()
+        
+        self.app.stopFrame()
+
+
+        
         
 
 
@@ -327,6 +341,10 @@ class WalkieTalkie:
             self.app.setButton('Record', 'Stop and Send')
         else:
             self.app.setButton('Record', 'Record')
+    
+    def simulate_connection_lost(self):
+        print('Simulating connection lost')
+        self.FileSender.disconnect()
         
         
 
@@ -380,8 +398,18 @@ class WalkieTalkie:
             self.app.setLabel("No Joined Groups", ', '.join(self.joined_groups))
     
     def test_connection(self):
-        #teste tilkoblingen. 
-        pass
+        print('Testing connection')
+        if self.FileReceiver.connected and self.FileSender.connected:
+            self.driver.send('connection_ok', 'stm')
+            self.app.setLabel("error_label", 'No errors')
+            self.app.setLabelBg("error_label", 'white')
+            print('Connection ok')
+        else:
+            self.app.setLabel("error_label", self.error_message)
+            self.app.setLabelBg("error_label", 'red')
+            print('Connection lost, resetting components and reconnecting')
+            self.FileReceiver = FileReceiverComponent(self.driver, self.MQTT_BROKER, self.MQTT_PORT)
+            self.FileSender = FileSenderComponent(self.driver, self.MQTT_BROKER, self.MQTT_PORT)
 
     
 

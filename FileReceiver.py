@@ -1,22 +1,18 @@
 import paho.mqtt.client as mqtt
 
-MQTT_BROKER = 'mqtt.item.ntnu.no'
-MQTT_PORT = 1883
-
-MQTT_TOPIC_OUTPUT = 'ttm4115/team_12/file'
-
 class FileReceiverComponent:
 
     def on_message(self, client, userdata, msg):
         print("file received")
-        f = open('newSoundFile.wav', 'wb')
+        f = open('input.wav', 'wb')
         f.write(msg.payload)
         f.close()
+        self.driver.send('message', 'stm')
     
     def on_connect(self, client, userdata, flags, rc):
         print('MQTT connected to {}'.format(client))
     
-    def __init__(self):
+    def __init__(self, driver, MQTT_BROKER, MQTT_PORT):
         
         self.mqtt_client = mqtt.Client()
         
@@ -25,6 +21,10 @@ class FileReceiverComponent:
         self.mqtt_client.connect(MQTT_BROKER, MQTT_PORT)
         self.mqtt_client.loop_start()
 
-        self.mqtt_client.subscribe(MQTT_TOPIC_OUTPUT, 0)
-
-        print("file receiver initiated")
+        self.driver = driver
+    
+    def subscribe_to_topic(self, topic):
+        self.mqtt_client.subscribe(topic, 0)
+    
+    def unsubscribe_from_topic(self, topic):
+        self.mqtt_client.unsubscribe(topic, 0)

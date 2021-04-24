@@ -1,11 +1,5 @@
 import paho.mqtt.client as mqtt
 
-MQTT_BROKER = 'mqtt.item.ntnu.no'
-MQTT_PORT = 1883
-
-MQTT_TOPIC_INPUT = 'ttm4115/team_12/file'
-
-
 class FileSenderComponent:
 
     def on_message(self, client, userdata, msg):
@@ -14,23 +8,26 @@ class FileSenderComponent:
     def on_connect(self, client, userdata, flags, rc):
         print('MQTT connected to {}'.format(client))
     
-    def __init__(self):
+    def __init__(self, driver, MQTT_BROKER, MQTT_PORT):
         self.mqtt_client = mqtt.Client()
         
         self.mqtt_client.on_connect = self.on_connect
         self.mqtt_client.on_message = self.on_message
         self.mqtt_client.connect(MQTT_BROKER, MQTT_PORT)
         self.mqtt_client.loop_start()
-        print('file sender initiated')
+
+        self.driver = driver
 
         
     
-    def send_file(self, fileName):
-        print('Sending file: {}'.format(fileName))
+    def send_file(self, fileName, topic):
+        print('Sending file: {} to topic: {}'.format(fileName, topic))
         f = open(fileName, "rb")
         binaryString = f.read()
         f.close()
         byteArray = bytearray(binaryString)
         
-        self.mqtt_client.publish(MQTT_TOPIC_INPUT, payload=byteArray, qos=2)
+        self.mqtt_client.publish(topic, payload=byteArray, qos=0)
+
+        self.driver.send('message_sent', 'stm')
         

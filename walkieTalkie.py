@@ -238,18 +238,22 @@ class WalkieTalkie:
 
     def create_gui(self):
         self.app = gui()
-        self.app.setSize(500, 500)
+        self.app.setSize(600, 620)
         self.app.setBg('white', override=False, tint=False)
 
+        self.app.startFrame("record", row=0, column=0)
         self.app.startLabelFrame('Record Message')
         self.app.addButton('Record', self.record_button)
         self.app.stopLabelFrame()
+        self.app.stopFrame()
 
+        self.app.startFrame("cancel", row=0, column=1)
         self.app.startLabelFrame('Cancel')
         self.app.addButton('Cancel', self.cancel_button)
         self.app.stopLabelFrame()
+        self.app.stopFrame()
 
-        self.app.startFrame("LEFT", row=50, column=0)
+        self.app.startFrame("join_groups", row=20, column=0)
         self.app.startLabelFrame('Join Groups')
         self.app.addButton('Join Doctors', self.on_button_pressed_join_groups)
         self.app.addButton('Join Nurses', self.on_button_pressed_join_groups)
@@ -259,6 +263,7 @@ class WalkieTalkie:
         self.app.stopLabelFrame()
         self.app.stopFrame()
 
+        self.app.startFrame("choose_recipient", row=40, column=0)
         self.app.startLabelFrame('Choose Recipient Group')
         self.app.addButton('Send to Doctors', self.on_button_pressed_recipient_group)
         self.app.addButton('Send to Nurses', self.on_button_pressed_recipient_group)
@@ -266,33 +271,37 @@ class WalkieTalkie:
         self.app.addLabel("recipient_groups_title", "Recipient Groups")
         self.app.addLabel("No Recipient Groups")
         self.app.stopLabelFrame()
+        self.app.stopFrame()
 
-
-        self.app.startFrame("RIGHT", row=50, column=1)
-
+        self.app.startFrame("leave_group", row=20, column=1)
         self.app.startLabelFrame('Leave Groups')
         self.app.addButton('Leave Doctors', self.on_button_pressed_leave_groups)
         self.app.addButton('Leave Nurses', self.on_button_pressed_leave_groups)
         self.app.addButton('Leave Surgeons', self.on_button_pressed_leave_groups)
         self.app.stopLabelFrame()
+        self.app.stopFrame()
 
+        self.app.startFrame("remove_recipient", row=40, column=1)
+        self.app.startLabelFrame('Remove Recipient Groups')
+        self.app.addButton('Remove Doctors', self.on_button_pressed_remove_groups)
+        self.app.addButton('Remove Nurses', self.on_button_pressed_remove_groups)
+        self.app.addButton('Remove Surgeons', self.on_button_pressed_remove_groups)
+        self.app.stopLabelFrame()
+        self.app.stopFrame()
+
+        self.app.startFrame("error_display", row=60, column=1)
         self.app.startLabelFrame('Error Display')
         self.app.addLabel("error_label", "No errors")
         self.app.addButton('Simulate connection lost', self.simulate_connection_lost)
         self.app.stopLabelFrame()
-        
         self.app.stopFrame()
-
-
-        
-        
-
-
-
 
         self.app.go()
     
     def record_button(self):
+        if len(self.recipient_groups) == 0:
+            print("No recipient groups to send to")
+            return
         self.recording = not self.recording
         self.set_record_button_text()
         self.driver.send('record_btn', 'stm')
@@ -335,6 +344,16 @@ class WalkieTalkie:
         elif 'surgeons' in group_name:
             group_name = 'surgeons'
         self.choose_recipient_group(group_name)
+    
+    def on_button_pressed_remove_groups(self, buttonTitle):
+        group_name = buttonTitle.lower()
+        if 'doctors' in group_name:
+            group_name = 'doctors'
+        elif 'nurses' in group_name:
+            group_name = 'nurses'
+        elif 'surgeons' in group_name:
+            group_name = 'surgeons'
+        self.remove_recipient_group(group_name)
     
     def set_record_button_text(self):
         if self.recording:
@@ -388,6 +407,12 @@ class WalkieTalkie:
         if not groupName in self.recipient_groups:
             self.recipient_groups.append(groupName)
             print("Choosing new recipient group: {}".format(groupName))
+            self.app.setLabel("No Recipient Groups", ', '.join(self.recipient_groups))
+    
+    def remove_recipient_group(self, groupName):
+        if groupName in self.recipient_groups:
+            print("Removing group: {}".format(groupName))
+            self.recipient_groups.remove(groupName)
             self.app.setLabel("No Recipient Groups", ', '.join(self.recipient_groups))
 
     def leave_group(self, groupName):

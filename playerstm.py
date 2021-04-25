@@ -14,6 +14,7 @@ class Player:
         self.driver = driver
         self.driver.add_machine(self.stm_player)
         self.fileName = ''
+        self.play_obj = None
 
     def play(self):
         self.wave_obj = sa.WaveObject.from_wave_file(self.fileName)
@@ -28,4 +29,6 @@ class Player:
         self.driver.send('start', 'stm_player')
     
     def stop_playing_sound(self):
-        self.play_obj.stop()
+        if self.play_obj is not None:
+            self.play_obj.stop()
+

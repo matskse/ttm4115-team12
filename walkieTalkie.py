@@ -213,6 +213,9 @@ class WalkieTalkie:
         self.recipient_groups = []
         self.all_groups = {"Doctors":False, "Nurses":False, "Surgeons":False,"Head Surgeon":False, "Janitors":False}
         
+        self.recording = False
+
+        #State machine
         self.stm = Machine(name='stm', transitions=[self.t0, self.t1, self.t2, self.t3, self.t4, self.t5, self.t6, self.t7, self.t8, self.t9, self.t10, self.t11, self.t12, self.t13, self.t14, self.t15, self.t16, self.t17, self.t18, self.t19, self.t20, self.t21], states=[self.idle, self.play_message, self.manage_groups, self.select_group, self.record_message, self.send_message, self.error, self.system_crash], obj=self)
         self.driver = Driver()
         self.driver.add_machine(self.stm)
@@ -220,7 +223,6 @@ class WalkieTalkie:
 
         #Voice recording
         self.Recorder = Recorder(self.driver)
-        self.recording = False
 
         #Message playing
         self.player = Player(self.driver)
@@ -307,10 +309,6 @@ class WalkieTalkie:
         self.driver.send('record_btn', 'stm')
     
     def cancel_button(self):
-        if self.recording:
-            self.Recorder.stop_recording()
-            self.recording = False
-            self.set_record_button_text()
         self.player.stop_playing_sound()
         self.driver.send('cancel_btn', 'stm')
     
@@ -381,6 +379,10 @@ class WalkieTalkie:
 
     def idle_state(self):
         print("Main state: Idle")
+        if self.recording:
+            self.Recorder.stop_recording()
+            self.recording = False
+            self.set_record_button_text()
 
     
     def record_receiver(self):

@@ -7,7 +7,7 @@ class FileReceiverComponent:
         f = open('input.wav', 'wb')
         f.write(msg.payload)
         f.close()
-        self.driver.send('message', 'stm')
+        self.driver.send('start', 'stm_player')
     
     def on_connect(self, client, userdata, flags, rc):
         print('File receiver connected')

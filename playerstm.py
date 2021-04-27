@@ -28,7 +28,7 @@ class Player:
         self.fileName = fileName
         self.driver.send('start', 'stm_player')
     
-    #def stop_playing_sound(self):
-    #    if self.play_obj is not None:
-    #        self.play_obj.stop()
+    def stop_playing_sound(self):
+        if self.play_obj is not None:
+            self.play_obj.stop()
 

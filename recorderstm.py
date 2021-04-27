@@ -55,6 +55,7 @@ class Recorder:
         wf.setframerate(self.fs)
         wf.writeframes(b''.join(self.frames))
         wf.close()
+        self.driver.send('recording_saved', 'stm')
     
     def start_recording(self):
         self.driver.send('start', 'stm_recorder')

@@ -90,7 +90,7 @@ class WalkieTalkie:
     }
 
     t11 = {
-        'trigger': 'record_btn', 
+        'trigger': 'recording_saved', 
         'source': 'record_message',
         'target': 'send_message', 
     }
@@ -114,7 +114,7 @@ class WalkieTalkie:
         'target': 'error',
     }
     t15 = {
-        'trigger': 'error_message', 
+        'trigger': 'error_message',
         'source': 'record_message',
         'target': 'error',
     }
@@ -209,6 +209,7 @@ class WalkieTalkie:
         self.topic_output = 'ttm4115/team_12/file'
         self.group_topics_base = 'ttm4115/team_12/groups/'
         self.voice_file_name = 'output.wav'
+        self.message_file_name_base = 'input.wav'
         self.joined_groups = []
         self.recipient_groups = []
         self.all_groups = {"Doctors":False, "Nurses":False, "Surgeons":False,"Head Surgeon":False, "Janitors":False}
@@ -236,6 +237,8 @@ class WalkieTalkie:
         #Errors
         self.error_message = 'ERROR: Connection lost'
 
+        self.message_index = 0
+
         self.create_gui()
 
     def create_gui(self):
@@ -246,6 +249,7 @@ class WalkieTalkie:
         self.app.startFrame("record", row=0, column=0)
         self.app.startLabelFrame('Record Message')
         self.app.addButton('Record', self.record_button)
+        self.app.addButton('Save and Send recording', self.stop_recording)
         self.app.stopLabelFrame()
         self.app.stopFrame()
 
@@ -304,8 +308,7 @@ class WalkieTalkie:
         if len(self.recipient_groups) == 0:
             print("No recipient groups to send to")
             return
-        self.recording = not self.recording
-        self.set_record_button_text()
+        self.recording = True
         self.driver.send('record_btn', 'stm')
     
     def cancel_button(self):
@@ -369,7 +372,9 @@ class WalkieTalkie:
     
     def play_message_f(self):
         print("Main state: Play message")
-        self.player.play_sound_file(self.voice_file_name)
+        next_file_name = 'input{}.wav'.format(self.message_index)
+        self.player.play_sound_file(next_file_name)
+        self.message_index += 1
 
     def record_message_f(self):
         print("Main state: Record message")
@@ -392,11 +397,14 @@ class WalkieTalkie:
 
     def send_message_f(self):
         print("Main state: Send message")
-        self.Recorder.stop_recording()
-        self.recording = False
         for group in self.recipient_groups:
             group_topic = '{0}{1}'.format(self.group_topics_base, group)
             self.FileSender.send_file(self.voice_file_name, group_topic)
+    
+    def stop_recording(self):
+        self.Recorder.stop_recording()
+        self.recording = False
+        self.set_record_button_text()
 
     def join_group(self, groupName):
         if not groupName in self.joined_groups:

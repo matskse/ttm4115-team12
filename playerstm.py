@@ -7,13 +7,13 @@ class Player:
     t1 = {'trigger': 'start', 'source': 'ready', 'target': 'playing'}
     t2 = {'trigger': 'done', 'source': 'playing', 'target': 'ready'}
 
-    s_playing = {'name': 'playing', 'do': 'play()'}
+    s_playing = {'name': 'playing', 'do': 'play()', 'start': 'defer'}
 
     def __init__(self, driver):
         self.stm_player = Machine(name='stm_player', transitions=[self.t0, self.t1, self.t2], states=[self.s_playing], obj=self)
         self.driver = driver
         self.driver.add_machine(self.stm_player)
-        self.fileName = ''
+        self.fileName = 'input.wav'
         self.play_obj = None
 
     def play(self):

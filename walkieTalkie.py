@@ -264,6 +264,7 @@ class WalkieTalkie:
         self.app.addButton('Join Doctors', self.on_button_pressed_join_groups)
         self.app.addButton('Join Nurses', self.on_button_pressed_join_groups)
         self.app.addButton('Join Surgeons', self.on_button_pressed_join_groups)
+        self.app.addButton('Join Important Information', self.on_button_pressed_join_groups)
         self.app.addLabel("joined_groups_title", "Joined Groups")
         self.app.addLabel("No Joined Groups")
         self.app.stopLabelFrame()
@@ -274,6 +275,7 @@ class WalkieTalkie:
         self.app.addButton('Send to Doctors', self.on_button_pressed_recipient_group)
         self.app.addButton('Send to Nurses', self.on_button_pressed_recipient_group)
         self.app.addButton('Send to Surgeons', self.on_button_pressed_recipient_group)
+        self.app.addButton('send to Important', self.on_button_pressed_recipient_group)
         self.app.addLabel("recipient_groups_title", "Recipient Groups")
         self.app.addLabel("No Recipient Groups")
         self.app.stopLabelFrame()
@@ -284,6 +286,7 @@ class WalkieTalkie:
         self.app.addButton('Leave Doctors', self.on_button_pressed_leave_groups)
         self.app.addButton('Leave Nurses', self.on_button_pressed_leave_groups)
         self.app.addButton('Leave Surgeons', self.on_button_pressed_leave_groups)
+        self.app.addButton(' Leave Important information', self.on_button_pressed_leave_groups)
         self.app.stopLabelFrame()
         self.app.stopFrame()
 
@@ -292,6 +295,7 @@ class WalkieTalkie:
         self.app.addButton('Remove Doctors', self.on_button_pressed_remove_groups)
         self.app.addButton('Remove Nurses', self.on_button_pressed_remove_groups)
         self.app.addButton('Remove Surgeons', self.on_button_pressed_remove_groups)
+        self.app.addButton('Remove Important Information', self.on_button_pressed_remove_groups)
         self.app.stopLabelFrame()
         self.app.stopFrame()
 
@@ -323,6 +327,8 @@ class WalkieTalkie:
             group_name = 'nurses'
         elif 'surgeons' in group_name:
             group_name = 'surgeons'
+        elif 'important' in group_name:
+            group_name = 'important'
         self.join_group(group_name)
     
     def on_button_pressed_leave_groups(self, buttonTitle):
@@ -333,6 +339,8 @@ class WalkieTalkie:
             group_name = 'nurses'
         elif 'surgeons' in group_name:
             group_name = 'surgeons'
+        elif 'important' in group_name:
+            group_name = 'important'
         self.leave_group(group_name)
 
     
@@ -344,6 +352,8 @@ class WalkieTalkie:
             group_name = 'nurses'
         elif 'surgeons' in group_name:
             group_name = 'surgeons'
+        elif 'important' in group_name:
+            group_name = 'important'
         self.choose_recipient_group(group_name)
     
     def on_button_pressed_remove_groups(self, buttonTitle):
@@ -354,6 +364,8 @@ class WalkieTalkie:
             group_name = 'nurses'
         elif 'surgeons' in group_name:
             group_name = 'surgeons'
+        elif 'important' in group_name:
+            group_name = 'important'
         self.remove_recipient_group(group_name)
     
     def set_record_button_text(self):

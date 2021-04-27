@@ -209,6 +209,7 @@ class WalkieTalkie:
         self.topic_output = 'ttm4115/team_12/file'
         self.group_topics_base = 'ttm4115/team_12/groups/'
         self.voice_file_name = 'output.wav'
+        self.message_file_name_base = 'input.wav'
         self.joined_groups = []
         self.recipient_groups = []
         self.all_groups = {"Doctors":False, "Nurses":False, "Surgeons":False,"Head Surgeon":False, "Janitors":False}
@@ -235,6 +236,8 @@ class WalkieTalkie:
 
         #Errors
         self.error_message = 'ERROR: Connection lost'
+
+        self.message_index = 0
 
         self.create_gui()
 
@@ -369,7 +372,9 @@ class WalkieTalkie:
     
     def play_message_f(self):
         print("Main state: Play message")
-        self.player.play_sound_file(self.voice_file_name)
+        next_file_name = 'input{}.wav'.format(self.message_index)
+        self.player.play_sound_file(next_file_name)
+        self.message_index += 1
 
     def record_message_f(self):
         print("Main state: Record message")

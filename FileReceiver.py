@@ -4,10 +4,12 @@ class FileReceiverComponent:
 
     def on_message(self, client, userdata, msg):
         print("file received")
-        f = open('input.wav', 'wb')
+        file_name = 'input{}.wav'.format(self.message_index)
+        self.message_index += 1
+        f = open(file_name, 'wb')
         f.write(msg.payload)
         f.close()
-        self.driver.send('start', 'stm_player')
+        self.driver.send('message', 'stm')
     
     def on_connect(self, client, userdata, flags, rc):
         print('File receiver connected')
@@ -32,6 +34,8 @@ class FileReceiverComponent:
         self.driver = driver
 
         self.connected = False
+
+        self.message_index = 0
     
     def subscribe_to_topic(self, topic):
         self.mqtt_client.subscribe(topic, 0)

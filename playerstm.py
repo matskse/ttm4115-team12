@@ -24,10 +24,10 @@ class Player:
         print("finished playing sound")
         self.driver.send('message_played', 'stm')
 
-    #def play_sound_file(self, fileName):
-    #    self.fileName = fileName
-    #    self.driver.send('start', 'stm_player')
-    #
+    def play_sound_file(self, fileName):
+        self.fileName = fileName
+        self.driver.send('start', 'stm_player')
+    
     #def stop_playing_sound(self):
     #    if self.play_obj is not None:
     #        self.play_obj.stop()

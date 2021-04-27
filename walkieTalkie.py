@@ -249,7 +249,7 @@ class WalkieTalkie:
         self.app.startFrame("record", row=0, column=0)
         self.app.startLabelFrame('Record Message')
         self.app.addButton('Record', self.record_button)
-        self.app.addButton('save recording', self.stop_recording)
+        self.app.addButton('Save and Send recording', self.stop_recording)
         self.app.stopLabelFrame()
         self.app.stopFrame()
 

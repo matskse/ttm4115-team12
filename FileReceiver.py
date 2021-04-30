@@ -39,9 +39,13 @@ class FileReceiverComponent:
     
     def subscribe_to_topic(self, topic):
         self.mqtt_client.subscribe(topic, 0)
+        print("subscribed, sends subscribed to stm")
+        self.driver.send('subscribed', 'stm')
     
     def unsubscribe_from_topic(self, topic):
         self.mqtt_client.unsubscribe(topic, 0)
+        print("unsubscribed, sends unsubscribed to stm")
+        self.driver.send('unsubscribed', 'stm')
     
 
     def disconnect(self):

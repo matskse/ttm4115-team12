@@ -39,6 +39,7 @@ class WalkieTalkie:
         'trigger': 'cancel_btn', 
         'source': 'play_message',
         'target': 'idle',
+        'effect': 'stop_playing()'
     }
 
     t3 = {
@@ -48,111 +49,136 @@ class WalkieTalkie:
     }
 
     t4 = {
-        'trigger': 'manage_btn', 
+        'trigger': 'join_btn', 
         'source': 'idle',
-        'target': 'manage_groups', 
+        'target': 'join_group',
+        'effect': 'join_group_f(*)' 
     }
 
     t5 = {
-        'trigger': 'cancel_btn', 
-        'source': 'manage_groups',
-        'target': 'idle',
+        'trigger': 'error_message', 
+        'source': 'join_group',
+        'target': 'error',
     }
 
     t6 = {
-        'trigger': 'select_btn', 
-        'source': 'idle',
-        'target': 'select_group', 
+        'trigger': 'subscribed', 
+        'source': 'join_group',
+        'target': 'idle',
     }
 
     t7 = {
+        'trigger': 'leave_btn', 
+        'source': 'idle',
+        'target': 'leave_group',
+        'effect': 'leave_group_f(*)'
+    }
+
+    t8 = {
+        'trigger': 'error_message', 
+        'source': 'leave_group',
+        'target': 'error',
+    }
+
+    t9 = {
+        'trigger': 'unsubscribed', 
+        'source': 'leave_group',
+        'target': 'idle',
+    }
+
+    t10 = {
+        'trigger': 'recipient_btn', 
+        'source': 'idle',
+        'target': 'select_group', 
+        'effect': 'choose_recipient_group(*)'
+    }
+
+    t11 = {
+        'trigger': 'leave_recipient_btn', 
+        'source': 'idle',
+        'target': 'select_group', 
+        'effect': 'remove_recipient_group(*)'
+    }
+
+
+    t12 = {
+        'trigger': 't1', 
+        'source': 'select_group',
+        'target': 'idle',
+    }
+    
+
+    t13 = {
         'trigger': 'cancel_btn', 
         'source': 'select_group',
         'target': 'idle', 
     }
 
-    t8 = {
+    t14 = {
         'trigger': 'record_btn', 
         'source': 'idle',
         'target': 'record_message',
     }
 
-    t9 = {
+    t15 = {
         'trigger': 'cancel_btn', 
         'source': 'record_message',
         'target': 'idle', 
     }
 
-    t10 = {
+    t16 = {
         'trigger': 'record_btn', 
         'source': 'select_group',
         'target': 'record_message', 
     }
 
-    t11 = {
+    t17 = {
         'trigger': 'recording_saved', 
         'source': 'record_message',
         'target': 'send_message', 
     }
 
-    t12 = {
+    t18 = {
         'trigger': 'message_sent', 
         'source': 'send_message',
         'target': 'idle', 
     }
 
-    t13 = {
+    t19 = {
         'trigger': 'error_message', 
         'source': 'idle',
-        'target': 'error',
-        'effect': 'start_timer("t2", 120000)', 
+        'target': 'error', 
     }
 
-    t14 = {
+    t20 = {
         'trigger': 'error_message', 
         'source': 'select_group',
         'target': 'error',
     }
-    t15 = {
+    t21 = {
         'trigger': 'error_message',
         'source': 'record_message',
         'target': 'error',
     }
-    t16 = {
+    t22 = {
         'trigger': 'error_message', 
         'source': 'send_message',
         'target': 'error',
     }
 
-    t17 = {
+    t23 = {
         'trigger': 'error_message', 
         'source': 'manage_groups',
         'target': 'error',
     }
 
-    t18 = {
+    t24 = {
         'trigger': 'connection_ok', 
         'source': 'error',
         'target': 'idle',
     }
 
-    t19 = {
-        'trigger': 't2',
-        'source': 'error',
-        'target': 'system_crash',
-    }
-
-    t20 = {
-        'trigger': 't1', 
-        'source': 'error',
-        'target': 'error'
-    }
-
-    t21 = {
-        'trigger': 'done',
-        'source': 'system_crash', 
-        'target': 'idle'
-    }
+    #states
 
     idle = {
         'name': 'idle', 
@@ -166,16 +192,14 @@ class WalkieTalkie:
         'error_message': 'defer'
     }
 
-    manage_groups = {
-        'name': 'manage_groups',
-        'join': 'join_group',
-        'delete': 'leave_group',
-        'message': 'defer'
-    }
+    join_group = {'name': 'join_group', 'message': 'defer'}
+
+    leave_group = {'name': 'leave_group', 'message': 'defer'}
+
 
     select_group = {
         'name': 'select_group',
-        'entry': 'record_receiver',
+        'entry': 'start_timer("t1", 1000)',
         'message': 'defer'
     }
 
@@ -193,13 +217,10 @@ class WalkieTalkie:
 
     error = {
         'name': 'error',
-        'entry': 'test_connection; start_timer("t1", 3000)'
+        'entry': 'test_connection;'
     }
 
-    system_crash = {
-        'name': 'system_crash',
-        'do': 'speak(*)'
-    }
+    
     
     def __init__(self):
         
@@ -217,7 +238,7 @@ class WalkieTalkie:
         self.recording = False
 
         #State machine
-        self.stm = Machine(name='stm', transitions=[self.t0, self.t1, self.t2, self.t3, self.t4, self.t5, self.t6, self.t7, self.t8, self.t9, self.t10, self.t11, self.t12, self.t13, self.t14, self.t15, self.t16, self.t17, self.t18, self.t19, self.t20, self.t21], states=[self.idle, self.play_message, self.manage_groups, self.select_group, self.record_message, self.send_message, self.error, self.system_crash], obj=self)
+        self.stm = Machine(name='stm', transitions=[self.t0, self.t1, self.t2, self.t3, self.t4, self.t5, self.t6, self.t7, self.t8, self.t9, self.t10, self.t11, self.t12, self.t13, self.t14, self.t15, self.t16, self.t17, self.t18, self.t19, self.t20, self.t21, self.t21, self.t22, self.t23, self.t24], states=[self.idle, self.play_message, self.join_group, self.leave_group, self.select_group, self.record_message, self.send_message, self.error], obj=self)
         self.driver = Driver()
         self.driver.add_machine(self.stm)
         self.driver.start()
@@ -316,8 +337,11 @@ class WalkieTalkie:
         self.driver.send('record_btn', 'stm')
     
     def cancel_button(self):
-        self.player.stop_playing_sound()
+        #self.player.stop_playing_sound()
         self.driver.send('cancel_btn', 'stm')
+    
+    def stop_playing(self):
+        self.player.stop_playing_sound()
     
     def on_button_pressed_join_groups(self, buttonTitle):
         group_name = buttonTitle.lower()
@@ -329,8 +353,12 @@ class WalkieTalkie:
             group_name = 'surgeons'
         elif 'important' in group_name:
             group_name = 'important'
-        self.join_group(group_name)
-    
+        #self.join_group(group_name)
+        if group_name not in self.joined_groups:
+            self.driver.send('join_btn', 'stm', args=[group_name])
+        else : 
+            pass
+
     def on_button_pressed_leave_groups(self, buttonTitle):
         group_name = buttonTitle.lower()
         if 'doctors' in group_name:
@@ -341,8 +369,11 @@ class WalkieTalkie:
             group_name = 'surgeons'
         elif 'important' in group_name:
             group_name = 'important'
-        self.leave_group(group_name)
-
+        #self.leave_group(group_name)
+        if group_name in self.joined_groups:
+            self.driver.send('leave_btn', 'stm', args=[group_name])
+        else: 
+            pass
     
     def on_button_pressed_recipient_group(self, buttonTitle):
         group_name = buttonTitle.lower()
@@ -354,7 +385,8 @@ class WalkieTalkie:
             group_name = 'surgeons'
         elif 'important' in group_name:
             group_name = 'important'
-        self.choose_recipient_group(group_name)
+        #self.choose_recipient_group(group_name)
+        self.driver.send('recipient_btn', 'stm', args=[group_name])
     
     def on_button_pressed_remove_groups(self, buttonTitle):
         group_name = buttonTitle.lower()
@@ -366,7 +398,8 @@ class WalkieTalkie:
             group_name = 'surgeons'
         elif 'important' in group_name:
             group_name = 'important'
-        self.remove_recipient_group(group_name)
+        #self.remove_recipient_group(group_name)
+        self.driver.send('leave_recipient_btn', 'stm', args=[group_name])
     
     def set_record_button_text(self):
         if self.recording:
@@ -402,10 +435,6 @@ class WalkieTalkie:
             self.set_record_button_text()
 
     
-    def record_receiver(self):
-        #bestem hvem man vil sende til. 
-        #gi en error message
-        pass
 
     def send_message_f(self):
         print("Main state: Send message")
@@ -418,7 +447,7 @@ class WalkieTalkie:
         self.recording = False
         self.set_record_button_text()
 
-    def join_group(self, groupName):
+    def join_group_f(self, groupName):
         if not groupName in self.joined_groups:
             print("joining group: {}".format(groupName))
             self.FileReceiver.subscribe_to_topic('{0}{1}'.format(self.group_topics_base, groupName))
@@ -437,7 +466,7 @@ class WalkieTalkie:
             self.recipient_groups.remove(groupName)
             self.app.setLabel("No Recipient Groups", ', '.join(self.recipient_groups))
 
-    def leave_group(self, groupName):
+    def leave_group_f(self, groupName):
         if groupName in self.joined_groups:
             print("Leaving group: {}".format(groupName))
             self.FileReceiver.unsubscribe_from_topic('{0}{1}'.format(self.group_topics_base, groupName))

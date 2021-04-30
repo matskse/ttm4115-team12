@@ -178,6 +178,12 @@ class WalkieTalkie:
         'target': 'idle',
     }
 
+    t25 = {
+        'trigger': 't2', 
+        'source': 'error',
+        'target': 'error',
+    }
+
     #states
 
     idle = {
@@ -217,7 +223,7 @@ class WalkieTalkie:
 
     error = {
         'name': 'error',
-        'entry': 'test_connection;'
+        'entry': 'test_connection; start_timer("t2", 3000)'
     }
 
     
@@ -238,7 +244,7 @@ class WalkieTalkie:
         self.recording = False
 
         #State machine
-        self.stm = Machine(name='stm', transitions=[self.t0, self.t1, self.t2, self.t3, self.t4, self.t5, self.t6, self.t7, self.t8, self.t9, self.t10, self.t11, self.t12, self.t13, self.t14, self.t15, self.t16, self.t17, self.t18, self.t19, self.t20, self.t21, self.t21, self.t22, self.t23, self.t24], states=[self.idle, self.play_message, self.join_group, self.leave_group, self.select_group, self.record_message, self.send_message, self.error], obj=self)
+        self.stm = Machine(name='stm', transitions=[self.t0, self.t1, self.t2, self.t3, self.t4, self.t5, self.t6, self.t7, self.t8, self.t9, self.t10, self.t11, self.t12, self.t13, self.t14, self.t15, self.t16, self.t17, self.t18, self.t19, self.t20, self.t21, self.t21, self.t22, self.t23, self.t24, self.t25], states=[self.idle, self.play_message, self.join_group, self.leave_group, self.select_group, self.record_message, self.send_message, self.error], obj=self)
         self.driver = Driver()
         self.driver.add_machine(self.stm)
         self.driver.start()
@@ -486,6 +492,7 @@ class WalkieTalkie:
             print('Connection lost, resetting components and reconnecting')
             self.FileReceiver = FileReceiverComponent(self.driver, self.MQTT_BROKER, self.MQTT_PORT)
             self.FileSender = FileSenderComponent(self.driver, self.MQTT_BROKER, self.MQTT_PORT)
+            
 
     
 

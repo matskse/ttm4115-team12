@@ -166,11 +166,6 @@ class WalkieTalkie:
         'target': 'error',
     }
 
-    t23 = {
-        'trigger': 'error_message', 
-        'source': 'manage_groups',
-        'target': 'error',
-    }
 
     t24 = {
         'trigger': 'connection_ok', 
@@ -181,6 +176,12 @@ class WalkieTalkie:
     t25 = {
         'trigger': 't2', 
         'source': 'error',
+        'target': 'error',
+    }
+
+    t23 = {
+        'trigger': 'error_message', 
+        'source': 'play_message',
         'target': 'error',
     }
 
@@ -195,7 +196,6 @@ class WalkieTalkie:
         'name': 'play_message',
         'entry': 'play_message_f',
         'message': 'defer',
-        'error_message': 'defer'
     }
 
     join_group = {'name': 'join_group', 'message': 'defer'}

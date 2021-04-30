@@ -36,9 +36,12 @@ class FileSenderComponent:
         binaryString = f.read()
         f.close()
         byteArray = bytearray(binaryString)
-        
-        self.mqtt_client.publish(topic, payload=byteArray, qos=0)
-
+        if topic == 'important': 
+            self.mqtt_client.publish(topic, payload=byteArray, qos=1, retain=True)
+            print("retained message sent, with qos = 1")
+        else : 
+            self.mqtt_client.publish(topic, payload=byteArray, qos=0)
+            print("unimportant message sent, qos = 0")
         self.driver.send('message_sent', 'stm')
     
     def disconnect(self):
